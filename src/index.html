@@ -18,6 +18,8 @@
             const c = document.getElementById("c");
             const w = c.width;
             const h = c.height;
+            const cntX = w/2;
+            const cntY = h/2;
             const ctx = c.getContext("2d");
             const bts = [];
             let m = false;
@@ -40,12 +42,13 @@
                     x=w-s;
                     y = hr * w;
                 }
-
+                let a = Math.atan2(x - cntX, y - cntY)
+                
                 return {
                     s,
                     x, 
                     y,
-                    a: Math.random(),
+                    a
                 };
             }
 
