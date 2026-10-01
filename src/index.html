@@ -63,6 +63,8 @@
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
+                    bt.x += 5*Math.cos(bt.a);
+                    bt.y += 5*Math.sin(bt.a);
                     ctx.fillRect(bt.x, bt.y, bt.s, bt.s);
                 });
             }
