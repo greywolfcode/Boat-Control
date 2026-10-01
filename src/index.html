@@ -16,16 +16,35 @@
         <script>
 
             const c = document.getElementById("c");
+            const w = c.width;
+            const h = c.height;
             const ctx = c.getContext("2d");
             const bts = [];
             let m = false;
 
             function crtBt()
             {
+                let wl = Math.random();
+                let wr = Math.random();
+                let hr = Math.random();
+                let s =  Math.random()*10;
+                let x=0;
+                let y=0;
+                if (wl < 0.5)
+                {
+                    x=0;
+                    y = hr * w;
+                }
+                else
+                {
+                    x=w-s;
+                    y = hr * w;
+                }
+
                 return {
-                    size: Math.random(),
-                    x:0, 
-                    y:0,
+                    s,
+                    x, 
+                    y,
                     a: Math.random(),
                 };
             }
@@ -37,10 +56,11 @@
 
             function main()
             {
+                bts.push(crtBt());
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
-                    ctx.fillRect(bt.x, bt.y, bt.size * 10, bt.size * 10);
+                    ctx.fillRect(bt.x, bt.y, bt.s, bt.s);
                 });
             }
 
