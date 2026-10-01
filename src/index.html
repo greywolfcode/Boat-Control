@@ -60,24 +60,12 @@
                 {
                     a += 2 * Math.PI;
                 }
-                
-                return {
-                    s,
-                    spd,
-                    x, 
-                    y,
-                    a
-                };
-            }
-
-            function drwBt(bt)
-            {
                 let ht;                
-                if (bt.s < 0.33)
+                if (s < 0.33)
                 {  
                     ht=5;
                 }
-                else if (bt.s < 0.99)
+                else if (s < 0.99)
                 {
                     ht=10;
                 }
@@ -85,10 +73,24 @@
                 {
                     ht=15;
                 }
+                
+                return {
+                    s,
+                    spd,
+                    x, 
+                    y,
+                    h:ht,
+                    w:5,
+                    a
+                };
+            }
+
+            function drwBt(bt)
+            {
                 ctx.save();
-                ctx.translate(bt.x + 5/2, bt.y + ht/2);
+                ctx.translate(bt.x + bt.w/2, bt.y + bt.h/2);
                 ctx.rotate(-bt.a);
-                ctx.fillRect(-5/2, -ht/2, 5, ht);
+                ctx.fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h);
                 ctx.restore();
             }
 
