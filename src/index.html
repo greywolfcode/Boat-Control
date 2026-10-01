@@ -18,13 +18,15 @@
             const c = document.getElementById("c");
             const ctx = c.getContext("2d");
             const bts = [];
+            let m = false;
 
             function crtBt()
             {
                 return {
                     size: Math.random(),
                     x:0, 
-                    y:0
+                    y:0,
+                    a: Math.random(),
                 };
             }
 
@@ -44,8 +46,19 @@
 
             c.addEventListener("mousemove", (e) =>
             {
-                bts[0].x = e.clientX;
-                bts[0].y = e.clientY;
+                if (m)
+                {
+                    bts[0].x = e.clientX;
+                    bts[0].y = e.clientY;
+                }
+            });
+            c.addEventListener("mousedown", (e) =>
+            {
+                m=true;
+            });
+            c.addEventListener("mouseup", (e) =>
+            {
+               m=false;
             });
 
         </script>
