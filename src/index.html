@@ -88,9 +88,9 @@
             function drwBt(bt)
             {
                 ctx.save();
-                ctx.translate(bt.x + bt.w/2, bt.y + bt.h/2);
+                ctx.translate(bt.x + bt.w, bt.y + bt.h);
                 ctx.rotate(-bt.a);
-                ctx.fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h);
+                ctx.fillRect(-bt.w, -bt.h, bt.w, bt.h);
                 ctx.restore();
             }
 
