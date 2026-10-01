@@ -14,7 +14,32 @@
             }
         </style>
         <script>
+
             const c = document.getElementById("c");
+            const ctx = c.getContext("2d");
+            const bts = [];
+
+            function crtBt()
+            {
+                return {
+                    size: Math.random(),
+                    x:0, 
+                    y:0
+                };
+            }
+
+            i = setInterval(main, 60);
+
+            bts.push(crtBt());
+            ctx.fillStyle = "red";
+
+            function main()
+            {
+                bts.forEach(bt => {
+                    ctx.fillRect(bt.x, bt.y, bt.size * 10, bt.size * 10);
+                });
+            }
+
         </script>
     </body>
 </html>
