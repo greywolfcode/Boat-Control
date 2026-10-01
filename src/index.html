@@ -56,6 +56,10 @@
                     y = hr * w;
                 }
                 let a = Math.atan2(x - cntX, y - cntY)
+                if (a < 0)
+                {
+                    a += 2 * Math.PI;
+                }
                 
                 return {
                     s,
@@ -64,6 +68,28 @@
                     y,
                     a
                 };
+            }
+
+            function drwBt(bt)
+            {
+                let ht;                
+                if (bt.s < 0.33)
+                {  
+                    ht=5;
+                }
+                else if (bt.s < 0.99)
+                {
+                    ht=10;
+                }
+                else
+                {
+                    ht=15;
+                }
+                ctx.save();
+                ctx.translate(bt.x + 5/2, bt.y + ht/2);
+                ctx.rotate(-bt.a);
+                ctx.fillRect(-5/2, -ht/2, 5, ht);
+                ctx.restore();
             }
 
             i = setInterval(main, 60);
@@ -79,7 +105,7 @@
                 bts.forEach(bt => {
                     bt.x += bt.spd*Math.cos(bt.a);
                     bt.y += bt.spd*Math.sin(bt.a);
-                    ctx.fillRect(bt.x, bt.y, bt.s, bt.s);
+                    drwBt(bt);
                 });
             }
 
