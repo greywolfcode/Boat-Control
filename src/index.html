@@ -30,6 +30,19 @@
                 let wr = Math.random();
                 let hr = Math.random();
                 let s =  Math.random()*10;
+                let spd;
+                if (s < 0.33)
+                {
+                    spd=6
+                }
+                else if (s < 0.66)
+                {
+                    spd=5
+                }
+                else
+                {
+                    spd=4
+                }
                 let x=0;
                 let y=0;
                 if (wl < 0.5)
@@ -46,6 +59,7 @@
                 
                 return {
                     s,
+                    spd,
                     x, 
                     y,
                     a
@@ -63,8 +77,8 @@
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
-                    bt.x += 5*Math.cos(bt.a);
-                    bt.y += 5*Math.sin(bt.a);
+                    bt.x += bt.spd*Math.cos(bt.a);
+                    bt.y += bt.spd*Math.sin(bt.a);
                     ctx.fillRect(bt.x, bt.y, bt.s, bt.s);
                 });
             }
