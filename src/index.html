@@ -140,42 +140,64 @@
             }
             function proj(bt, ax)
             {
-                return [
-                    {
-                        x: projp1(bt.tl, ax) * ax.x, 
-                        y: projp1(bt.tl, ax) * ax.y 
-                    },
-                    {
-                        x: projp1(bt.tr, ax) * ax.x, 
-                        y: projp1(bt.tr, ax) * ax.y 
-                    },
-                    {
-                        x: projp1(bt.bl, ax) * ax.x, 
-                        y: projp1(bt.bl, ax) * ax.y 
-                    },
-                    {
-                        x: projp1(bt.br, ax) * ax.x, 
-                        y: projp1(bt.br, ax) * ax.y 
-                    }
-                ];
+                let min = Infinity;
+                let max = -Infinity;
+
+                let prod = dotProd(bt.tl, ax);
+                if (prod < min)
+                {
+                    min = prod;
+                }
+                if (prod > max)
+                {
+                    max = prod;
+                }
+                prod = dotProd(bt.tr, ax);
+                if (prod < min)
+                {
+                    min = prod;
+                }
+                if (prod > max)
+                {
+                    max = prod;
+                }
+                prod = dotProd(bt.bl, ax);
+                if (prod < min)
+                {
+                    min = prod;
+                }
+                if (prod > max)
+                {
+                    max = prod;
+                }
+                prod = dotProd(bt.br, ax);
+                if (prod < min)
+                {
+                    min = prod;
+                }
+                if (prod > max)
+                {
+                    max = prod;
+                }
+                
+                return [min, max];
             }
 
             function col(bt1, bt2)
             {
                 let axs = [...getAxs(bt1), ...getAxs(bt2)];
 
-                axs.forEach(ax => {
+                for (ax of axs)
+                {
                     let proj1 = proj(bt1, ax); 
                     let proj2 = proj(bt2, ax); 
-                    let sclr1 = [Math.min(proj1), Math.max(proj1)];
-                    let sclr2 = [Math.min(proj2), Math.max(proj2)];
-                    if (sclr1[0] <= sclr2[1] && sclr1[1] >= sclr2[0])
+                    if (proj1[0] <= proj2[1] && proj1[1] >= proj2[0])
                     {
-                        return true;    
+                        return false;    
                     }
-                });
+                };
 
-                return false;
+                return true;
             }
 
             function drwBt(bt)
