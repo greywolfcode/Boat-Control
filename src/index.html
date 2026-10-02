@@ -26,6 +26,7 @@
             const ctx = c.getContext("2d");
             const bts = [];
             let m = false;
+            let mBt = null;
             let dt = 0;
             let lt = performance.now();
 
@@ -112,8 +113,8 @@
 
             function getAxs(bt)
             {
-                let aX = bt.tl[0] - (bt.tl[0] + bt.w * Math.cos(bt.a));
-                let aY = bt.tl[1] - (bt.tl[1] + bt.h * Math.sin(bt.a));
+                let aX = Math.cos(bt.a);
+                let aY = Math.sin(bt.a);
 
                 return [
                     {
