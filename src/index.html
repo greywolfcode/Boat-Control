@@ -7,16 +7,24 @@
     <body>
         <canvas id="c"></canvas>
         <style>
-            body { 
+            html, body { 
+                margin: 0;
+                padding: 0;
                 background: black; 
-                color: white; 
-                font-family: sans-serif; 
+            }
+            canvas {
+                background: blue; 
+                object-fit: contain;
+                width: 100vw;
+                height: 100vh;
+                display: block;
+                margin: auto;
             }
         </style>
         <script>
             const c = document.getElementById("c");
-            const w = c.width;
-            const h = c.height;
+            const w = c.width = 800;
+            const h = c.height = 640;
             const cntX = w/2;
             const cntY = h/2;
             const ctx = c.getContext("2d");
