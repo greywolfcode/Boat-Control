@@ -81,8 +81,82 @@
                     y,
                     h:ht,
                     w:5,
-                    a
+                    a,
+                    tl: [x, y],
+                    tr: [
+                            x + w * Math.cos(a), 
+                            y + w * Math.sin(a)
+                        ],
+                    bl: [
+                            x - h * Math.sin(a), 
+                            y + h * Math.cos(a)
+                        ],
+                    br: [
+                            x + w * Math.cos(a) - h * Math.sin(a), 
+                            y + w * Math.sin(a) + h * Math.cos(a)
+                        ]
                 };
+            }
+
+            function getAxs(bt)
+            {
+                return [
+                    {
+                        x: bt1.tl[0] - (bt1.tl[0] + bt.w * Math.cos(bt1.a)),
+                        y: bt1.tl[1] - (bt1.tl[1] + bt.h * Math.sin(bt1.a))
+                    },
+                    {
+                        x: a1Y,
+                        y: -a1X
+                    },
+                ];
+            }
+            function projp1(c, ax)
+            {
+                return (c[0] * ax.x + c[1] * ax.y) / (ax.x ** 2 + ax.y ** 2);
+            }
+            function dotProd(v1, v2)
+            {
+                return v1.x * v2.x + v1.y * v2.y;
+            }
+            function proj(bt, ax)
+            {
+                return [
+                    {
+                        x: projp1(bt.tl, ax) * ax.x, 
+                        y: projp1(bt.tl, ax) * ax.y 
+                    },
+                    {
+                        x: projp1(bt.tr, ax) * ax.x, 
+                        y: projp1(bt.tr, ax) * ax.y 
+                    },
+                    {
+                        x: projp1(bt.bl, ax) * ax.x, 
+                        y: projp1(bt.bl, ax) * ax.y 
+                    },
+                    {
+                        x: projp1(bt.br, ax) * ax.x, 
+                        y: projp1(bt.br, ax) * ax.y 
+                    }
+                ];
+            }
+
+            function col(bt1, bt2)
+            {
+                let axs = [...getAxs(bt1), ...getAxs(bt2)];
+
+                axs.forEach(ax => {
+                    let proj1 = proj(bt1, ax); 
+                    let proj2 = proj(bt2, ax); 
+                    let sclr1 = [Math.min(proj1), Math.max(proj1)];
+                    let sclr2 = [Math.min(proj2), Math.max(proj2)];
+                    if (sclr[0] <= sclr2[1] && sclr[1] >= sclr2[0])
+                    {
+                        return true;    
+                    }
+                });
+
+                return false;
             }
 
             function drwBt(bt)
