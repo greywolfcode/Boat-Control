@@ -212,8 +212,8 @@
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
-                    bt.x += bt.spd*Math.cos(bt.a);
-                    bt.y += bt.spd*Math.sin(bt.a);
+                    bt.x -= bt.spd*Math.sin(bt.a);
+                    bt.y -= bt.spd*Math.cos(bt.a);
                     drwBt(bt);
                 });
             }
