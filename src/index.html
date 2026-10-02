@@ -41,17 +41,17 @@
                 let spd;
                 if (s < 0.33)
                 {
-                    spd=6;
+                    spd=0.06;
                     c=1;
                 }
                 else if (s < 0.66)
                 {
-                    spd=5;
+                    spd=0.05;
                     c=2
                 }
                 else
                 {
-                    spd=4;
+                    spd=0.04;
                     c=3;
                 }
                 let x=0;
@@ -232,15 +232,15 @@
 
             function main()
             {
-                dt = lt - performance.now();
+                dt = performance.now() - lt;
                 lt = performance.now();     
 
                 bts.push(crtBt());
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
-                    bt.x -= bt.spd*Math.sin(bt.a);
-                    bt.y -= bt.spd*Math.cos(bt.a);
+                    bt.x -= bt.spd*Math.sin(bt.a)*dt;
+                    bt.y -= bt.spd*Math.cos(bt.a)*dt;
                     drwBt(bt);
                 });
             }
