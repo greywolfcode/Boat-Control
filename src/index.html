@@ -81,7 +81,7 @@
                     x, 
                     y,
                     h:ht,
-                    w:5,
+                    w:10,
                     a,
                     tl: [x, y],
                     tr: [
@@ -165,14 +165,18 @@
                 ctx.save();
                 ctx.translate(bt.x + bt.w, bt.y + bt.h);
                 ctx.rotate(-bt.a);
+                ctx.beginPath();
                 ctx.fillRect(-bt.w, -bt.h, bt.w, bt.h);
+                ctx.arc(-bt.w/2, -bt.h, bt.w/2, 0, 180);
+                ctx.fill();
                 ctx.restore();
             }
 
             i = setInterval(main, 60);
 
             bts.push(crtBt());
-            ctx.fillStyle = "red";
+            ctx.fillStyle = "lightgrey";
+            ctx.strokeStyle = "lightgrey";
 
             function main()
             {
