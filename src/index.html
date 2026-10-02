@@ -226,7 +226,7 @@
                 ctx.restore();
             }
 
-            i = setInterval(main, 60);
+            
 
             bts.push(crtBt());
 
@@ -243,6 +243,8 @@
                     bt.y -= bt.spd*Math.cos(bt.a)*dt;
                     drwBt(bt);
                 });
+
+                requestAnimationFrame(main);
             }
 
             c.addEventListener("mousemove", (e) =>
@@ -262,6 +264,7 @@
                m=false;
             });
 
+            main();
         </script>
     </body>
 </html>
