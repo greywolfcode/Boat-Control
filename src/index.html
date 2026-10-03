@@ -30,6 +30,16 @@
             let dt = 0;
             let lt = performance.now();
 
+            function getA(x1, y1, x2, y2)
+            {
+                let a = Math.atan2(x1 - x2, y1 - y2)
+                if (a < 0)
+                {
+                    a += 2 * Math.PI;
+                }
+                return a;
+            }
+
             function crtBt()
             {
                 let wl = Math.random();
@@ -66,11 +76,7 @@
                     x=w-s;
                     y = hr * w;
                 }
-                let a = Math.atan2(x - cntX, y - cntY)
-                if (a < 0)
-                {
-                    a += 2 * Math.PI;
-                }
+                let a = getA(x, y, cntX, cntY);
                 let ht;                
                 if (s < 0.33)
                 {  
