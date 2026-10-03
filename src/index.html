@@ -119,7 +119,7 @@
                 ctx.fillStyle = "lightgrey";
                 ctx.save();
                 ctx.translate(bt.x, bt.y);
-                ctx.rotate(bt.a);
+                ctx.rotate(Math.PI-bt.a);
                 ctx.beginPath();
                 ctx.fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
                 ctx.arc(0, bt.h/2, bt.w/2, 0, Math.PI);
