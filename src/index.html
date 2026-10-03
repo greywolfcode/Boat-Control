@@ -89,6 +89,7 @@
                     s,
                     col,
                     c,
+                    pt: [],
                     spd,
                     x: x+5, 
                     y:y-(ht+c)/2,
@@ -131,11 +132,18 @@
                 {
                      ctx.fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
                 }
+                ctx.restore()
 
-                ctx.restore();
+                ctx.strokeStyle = "lightgrey";
+                let prv = [bt.x, bt.y];
+                bt.pt.forEach(pt => {
+                    ctx.beginPath();
+                    ctx.moveTo(prv[0], prv[1]);
+                    ctx.lineTo(pt[0], pt[1]);
+                    ctx.stroke();
+                    prv = pt;
+                });
             }
-
-            
 
             bts.push(crtBt());
 
@@ -144,7 +152,6 @@
                 dt = performance.now() - lt;
                 lt = performance.now();     
 
-                bts.push(crtBt());
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
@@ -156,21 +163,53 @@
                 requestAnimationFrame(main);
             }
 
+            function getMP(e)
+            {
+                const rect = c.getBoundingClientRect();
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
             c.addEventListener("mousemove", (e) =>
             {
-                if (m)
+                let mP = getMP(e);
+                if (mBt != null)
                 {
-                    bts[0].x = e.clientX;
-                    bts[0].y = e.clientY;
+                    mBt.pt.push([mP.x, mP.y]);
                 }
             });
             c.addEventListener("mousedown", (e) =>
             {
                 m=true;
+                let mP = getMP(e);
+
+                let x = mP.x; 
+                let y = mP.y;
+                let mr = {
+                    x: x, 
+                    y: y,
+                    h:0,
+                    w:0,
+                }
+                
+                bts.forEach(bt => {
+                    if (col(bt, mr))
+                    {
+                        mBt = bt;
+                    }
+                });
             });
             c.addEventListener("mouseup", (e) =>
             {
                m=false;
+               mBt=null;
+            });
+            c.addEventListener("mouseleave", (e) =>
+            {
+               m=false;
+               mBt=null;
             });
 
             main();
