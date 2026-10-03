@@ -90,107 +90,21 @@
                     col,
                     c,
                     spd,
-                    x, 
-                    y,
+                    x: x+5, 
+                    y:y-(ht+c)/2,
                     h:ht+c,
                     w:10,
                     a,
-                    tl: [x, y],
-                    tr: [
-                            x + w * Math.cos(a), 
-                            y + w * Math.sin(a)
-                        ],
-                    bl: [
-                            x - h * Math.sin(a), 
-                            y + h * Math.cos(a)
-                        ],
-                    br: [
-                            x + w * Math.cos(a) - h * Math.sin(a), 
-                            y + w * Math.sin(a) + h * Math.cos(a)
-                        ]
                 };
-            }
-
-            function getAxs(bt)
-            {
-                let aX = Math.cos(bt.a);
-                let aY = Math.sin(bt.a);
-
-                return [
-                    {
-                        x: aX,
-                        y: aY
-                    },
-                    {
-                        x: aY,
-                        y: -aX
-                    },
-                ];
-            }
-            function dotProd(v1, v2)
-            {
-                return v1.x * v2.x + v1.y * v2.y;
-            }
-            function proj(bt, ax)
-            {
-                let min = Infinity;
-                let max = -Infinity;
-
-                let prod = dotProd(bt.tl, ax);
-                if (prod < min)
-                {
-                    min = prod;
-                }
-                if (prod > max)
-                {
-                    max = prod;
-                }
-                prod = dotProd(bt.tr, ax);
-                if (prod < min)
-                {
-                    min = prod;
-                }
-                if (prod > max)
-                {
-                    max = prod;
-                }
-                prod = dotProd(bt.bl, ax);
-                if (prod < min)
-                {
-                    min = prod;
-                }
-                if (prod > max)
-                {
-                    max = prod;
-                }
-                prod = dotProd(bt.br, ax);
-                if (prod < min)
-                {
-                    min = prod;
-                }
-                if (prod > max)
-                {
-                    max = prod;
-                }
-                
-                return [min, max];
             }
 
             function col(bt1, bt2)
             {
-                let axs = [...getAxs(bt1), ...getAxs(bt2)];
+                let dx = bt1.x - bt2.x;
+                let dy = bt1.y - bt2.y;
+                let d = (bt1.w) + (bt2.w);
 
-                for (ax of axs)
-                {
-                    let proj1 = proj(bt1, ax); 
-                    let proj2 = proj(bt2, ax); 
-                    if (proj1[0] <= proj2[1] && proj1[1] >= proj2[0])
-                    {
-                        return false;    
-                    }
-                };
-
-                return true;
+                return (dx **2 + dy **2) <= (d ** 2);
             }
 
             function drwBt(bt)
