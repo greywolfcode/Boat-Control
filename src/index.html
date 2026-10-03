@@ -150,6 +150,21 @@
                     prv = pt;
                 });
             }
+            function mvBt(bt)
+            {
+                if(bt.pt.length  > 0)
+                {
+                    let p = bt.pt[0];
+                    bt.a = getA(bt.x, bt.y, p[0], p[1]);
+                    let d = Math.sqrt((bt.x - p[0]) ** 2 + (bt.y - p[1]) ** 2);
+                    if ( d <= 1)
+                    {
+                        bt.pt.shift();
+                    }
+                }
+                bt.x -= bt.spd*Math.sin(bt.a)*dt;
+                bt.y -= bt.spd*Math.cos(bt.a)*dt;
+            }
 
             bts.push(crtBt());
 
@@ -161,8 +176,7 @@
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
-                    bt.x -= bt.spd*Math.sin(bt.a)*dt;
-                    bt.y -= bt.spd*Math.cos(bt.a)*dt;
+                    mvBt(bt);
                     drwBt(bt);
                 });
 
