@@ -20,11 +20,13 @@
         <script>
             const c = document.getElementById("c");
             const w = c.width = 800;
-            const h = c.height = 640;
+            const h = c.height = 480;
             const cntX = w/2;
             const cntY = h/2;
             const ctx = c.getContext("2d");
             const bts = [];
+            const dks = [];
+            const lnd = [];
             let m = false;
             let mBt = null;
             let dt = 0;
@@ -38,6 +40,16 @@
                     a += 2 * Math.PI;
                 }
                 return a;
+            }
+            
+            function crtDk(x, y, col, a)
+            {
+                return {
+                    x,
+                    y,
+                    col,
+                    a
+                };
             }
 
             function crtBt()
@@ -165,8 +177,39 @@
                 bt.x -= bt.spd*Math.sin(bt.a)*dt;
                 bt.y -= bt.spd*Math.cos(bt.a)*dt;
             }
+            function drwDk(dk)
+            {
+                ctx.save();
+                ctx.translate(dk.x, dk.y);
+                ctx.rotate(dk.a);
+
+                let l = -5;
+                let t = 5;
+
+                if (dk.col < 1)
+                {
+                    ctx.fillStyle = "purple";
+                }
+                else
+                {
+                    ctx.fillStyle = "orange";
+                }
+
+                ctx.beginPath();
+                ctx.fillRect(l-10, t-10, 30, 5);
+                ctx.fillRect(l-10, t-10, 5, 40);
+                ctx.fillRect(l+20, t-10, 5, 40);
+
+                ctx.restore()
+            }
 
             bts.push(crtBt());
+
+            dks.push(crtDk(350, 120, 0, -Math.PI/6));
+            dks.push(crtDk(320, 137, 0, -Math.PI/6));
+            dks.push(crtDk(580, 380, 1, 5*Math.PI/6));
+            dks.push(crtDk(550, 397, 1, 5*Math.PI/6));
+
 
             function main()
             {
@@ -178,6 +221,9 @@
                 bts.forEach(bt => {
                     mvBt(bt);
                     drwBt(bt);
+                });
+                dks.forEach(dk => {
+                    drwDk(dk);
                 });
 
                 requestAnimationFrame(main);
