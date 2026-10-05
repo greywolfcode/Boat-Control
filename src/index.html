@@ -32,6 +32,8 @@
             let dt = 0;
             let lt = performance.now();
             let scr = 0;
+            let spwnT = 1;
+            let spwnI = 0;
 
             function getA(x1, y1, x2, y2)
             {
@@ -122,6 +124,26 @@
                     d: false
                 };
             }
+            function spwnCrv(x)
+            {
+                return ((1 - Math.E ** (-0.5 * x)) / (1 - Math.E ** (-0.5))) ** 0.15
+            }
+            function spwn()
+            {
+                if (spwnT > spwnI)
+                {
+                    let bt = crtBt();
+                    bt.i = bts.length;
+                    bts.push(bt);
+                    spwnT = 0;
+                    spwnI = spwnCrv(Math.random()) * 5000;
+                }
+                else
+                {
+                    spwnT += dt;
+                }
+
+            }
 
             function col(bt1, bt2)
             {
@@ -209,8 +231,6 @@
                 ctx.restore()
             }
 
-            bts.push(crtBt());
-
             dks.push(crtDk(348, 121, 0, -Math.PI/6));
             dks.push(crtDk(320, 137, 0, -Math.PI/6));
             dks.push(crtDk(578, 381, 1, 5*Math.PI/6));
@@ -220,7 +240,9 @@
             function main()
             {
                 dt = performance.now() - lt;
-                lt = performance.now();     
+                lt = performance.now();    
+                
+                spwn();
 
                 ctx.clearRect(0, 0, c.width, c.height);
 
