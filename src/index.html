@@ -48,7 +48,9 @@
                     x,
                     y,
                     col,
-                    a
+                    a,
+                    d: false,
+                    w:30
                 };
             }
 
@@ -58,7 +60,7 @@
                 let wr = Math.random();
                 let hr = Math.random();
                 let s =  Math.random()*10;
-                let col = Math.random();
+                let col = Math.round(Math.random());
                 let c;
                 let spd;
                 if (s < 0.33)
@@ -114,6 +116,7 @@
                     h:ht+c,
                     w:10,
                     a,
+                    d: false
                 };
             }
 
@@ -184,7 +187,7 @@
                 ctx.rotate(dk.a);
 
                 let l = -5;
-                let t = 5;
+                let t = -20;
 
                 if (dk.col < 1)
                 {
@@ -198,16 +201,16 @@
                 ctx.beginPath();
                 ctx.fillRect(l-10, t-10, 30, 5);
                 ctx.fillRect(l-10, t-10, 5, 40);
-                ctx.fillRect(l+20, t-10, 5, 40);
+                ctx.fillRect(l+18, t-10, 5, 40);
 
                 ctx.restore()
             }
 
             bts.push(crtBt());
 
-            dks.push(crtDk(350, 120, 0, -Math.PI/6));
+            dks.push(crtDk(348, 121, 0, -Math.PI/6));
             dks.push(crtDk(320, 137, 0, -Math.PI/6));
-            dks.push(crtDk(580, 380, 1, 5*Math.PI/6));
+            dks.push(crtDk(578, 381, 1, 5*Math.PI/6));
             dks.push(crtDk(550, 397, 1, 5*Math.PI/6));
 
 
@@ -219,8 +222,28 @@
                 ctx.clearRect(0, 0, c.width, c.height);
 
                 bts.forEach(bt => {
-                    mvBt(bt);
+                    if (!bt.d)
+                    {
+                        mvBt(bt);
+                    }
                     drwBt(bt);
+
+                    dks.forEach(dk => {
+                        if (!dk.d && dk.col == bt.col)
+                        {
+                            if (col(dk, bt))
+                            {
+                                bt.d = true;
+                                dk.d = true;
+                                bt.x = dk.x;
+                                bt.y = dk.y;
+                                bt.a = -dk.a;
+                                bt.pt = [];
+                            }
+                        }
+                        drwDk(dk);
+                    });
+
                 });
                 dks.forEach(dk => {
                     drwDk(dk);
@@ -261,7 +284,7 @@
                 }
                 
                 bts.forEach(bt => {
-                    if (col(bt, mr))
+                    if (!bt.d && col(bt, mr))
                     {
                         mBt = bt;
                         bt.pt = [];
