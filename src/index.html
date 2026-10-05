@@ -230,11 +230,10 @@
                     {
                         mvBt(bt);
                         dks.some(dk => {
-                            if (!dk.d && dk.col == bt.col)
+                            if (!dk.d && dk.col == bt.col && bt.c > 0)
                             {
                                 if (col(dk, bt))
                                 {
-                                    console.log(dk.x);
                                     bt.d = true;
                                     dk.d = true;
                                     bt.x = dk.x;
@@ -308,10 +307,15 @@
                 }
                 
                 bts.forEach(bt => {
-                    if (!bt.d && col(bt, mr))
+                    if ((!bt.d || bt.c < 1) && col(bt, mr))
                     {
                         mBt = bt;
                         bt.pt = [];
+
+                        if (bt.c < 1)
+                        {
+                            bt.d = false;
+                        }
                     }
                 });
             });
