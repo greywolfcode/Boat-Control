@@ -71,20 +71,24 @@
                 let col = Math.round(Math.random());
                 let c;
                 let spd;
+                let ht;                
                 if (s < 0.33)
                 {
                     spd=0.06;
                     c=1;
+                    ht=5;
                 }
                 else if (s < 0.66)
                 {
                     spd=0.05;
-                    c=2
+                    c=2;
+                    ht=10;
                 }
                 else
                 {
                     spd=0.04;
                     c=3;
+                    ht=15;
                 }
                 let x=0;
                 let y=0;
@@ -99,19 +103,6 @@
                     y = hr * 180;
                 }
                 let a = getA(x, y, cntX, cntY);
-                let ht;                
-                if (s < 0.33)
-                {  
-                    ht=5;
-                }
-                else if (s < 0.99)
-                {
-                    ht=10;
-                }
-                else
-                {
-                    ht=15;
-                }
                 
                 return {
                     s,
