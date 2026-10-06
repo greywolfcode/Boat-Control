@@ -26,7 +26,10 @@
             const ctx = c.getContext("2d");
             const bts = [];
             const dks = [];
-            const lnd = [];
+            const lnd = [
+                [[0, 0], [0, 200], [311, 152], [300, 130], [292, 119], [350, 90], [367, 123], [400, 0]],
+                [[400, 480], [530, 397], [550, 432], [606, 399], [606, 399], [582, 368], [800, 300], [800, 480]]
+            ];
             let m = false;
             let mBt = null;
             let dt = 0;
@@ -230,6 +233,19 @@
 
                 ctx.restore()
             }
+            function drwLnd(lnd)
+            {
+                ctx.fillStyle = "green";
+                ctx.beginPath();
+                ctx.moveTo(lnd[0][0], lnd[0][1]);
+                for (let i=1; i<lnd.length; i++)
+                {
+                    ctx.lineTo(lnd[i][0], lnd[i][1]);
+
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
 
             dks.push(crtDk(348, 121, 0, -Math.PI/6));
             dks.push(crtDk(320, 137, 0, -Math.PI/6));
@@ -269,6 +285,9 @@
                         });
                     }
                 });
+                lnd.forEach(pt => {
+                    drwLnd(pt);
+                });
                 dks.forEach(dk => {
                     drwDk(dk);
                     if (dk.d)
@@ -292,6 +311,7 @@
                     }
                 });
 
+                ctx.fillStyle = "white";
                 ctx.fillText("Cargo: " + scr, 20, 20);
 
                 requestAnimationFrame(main);
