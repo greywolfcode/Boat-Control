@@ -22,6 +22,7 @@
             const cntX = w/2;
             const cntY = h/2;
             const ctx = c.getContext("2d");
+            ctx.font = "20px serif"; 
             let bts = [];
             const dks = [];
             const lnd = [
@@ -35,6 +36,7 @@
             let scr = 0;
             let spwnT = 1;
             let spwnI = 0;
+            let st = 0
 
             function getA(x1, y1, x2, y2)
             {
@@ -279,85 +281,69 @@
             bts.push(crtBt());
             function main()
             {
-                dt = performance.now() - lt;
-                lt = performance.now();    
-                
-                spwn();
+                if (st == 0)
+                {
 
-                ctx.clearRect(0, 0, c.width, c.height);
+                    dt = performance.now() - lt;
+                    lt = performance.now();    
+                    
+                    spwn();
 
-                
-                lnd.forEach(pt => {
-                    drwLnd(pt);
-                });
-                dks.forEach(dk => {
-                    drwDk(dk);
-                    if (dk.d)
-                    {
-                        if (dk.t > 2500)
-                        {
-                            dk.t = 0
-                            dk.bt.c--;
-                            scr++;
-                        }
-                        else
-                        {
-                            dk.t += dt;
-                        }
+                    ctx.clearRect(0, 0, c.width, c.height);
 
-                        if (dk.bt.c < 1)
-                        {
-                            dk.d = false;
-                            dk.bt.a += Math.PI
-                        }
-                    }
-                });
-                bts.forEach(bt => {
-                    drwBt(bt);
-                    if (!bt.d)
-                    {
-                        mvBt(bt);
-                        dks.some(dk => {
-                            if (!dk.d && dk.col == bt.col && bt.c > 0)
-                            {
-                                if (col(dk, bt))
-                                {
-                                    bt.d = true;
-                                    dk.d = true;
-                                    bt.x = dk.x;
-                                    bt.y = dk.y;
-                                    bt.a = -dk.a;
-                                    bt.pt = [];
-                                    dk.bt = bt;
-                                    return true;
-                                }
-                            }
-                        });
-                    }
+                    
                     lnd.forEach(pt => {
-                        let prev = pt[0];
-                        for (let i=1; i<pt.length; i++)
+                        drwLnd(pt);
+                    });
+                    dks.forEach(dk => {
+                        drwDk(dk);
+                        if (dk.d)
                         {
-                            if (lnCol(prev, pt[i], bt))
+                            if (dk.t > 2500)
                             {
-                                bt.a = ref(prev, pt[i], bt.a);
-                                bt.pt = [];
-                                mvBt(bt);
+                                dk.t = 0
+                                dk.bt.c--;
+                                scr++;
                             }
-                            prev = pt[i]
+                            else
+                            {
+                                dk.t += dt;
+                            }
+
+                            if (dk.bt.c < 1)
+                            {
+                                dk.d = false;
+                                dk.bt.a += Math.PI
+                            }
                         }
                     });
-                    [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
-                        let prev = pt[0];
-                        for (let i=1; i<pt.length; i++)
+                    bts.forEach(bt => {
+                        drwBt(bt);
+                        if (!bt.d)
                         {
-                            if (lnCol(prev, pt[i], bt))
-                            {
-                                if (bt.c < 1)
+                            mvBt(bt);
+                            dks.some(dk => {
+                                if (!dk.d && dk.col == bt.col && bt.c > 0)
                                 {
-                                    bts = bts.filter(b => b.i != bt.i);
+                                    if (col(dk, bt))
+                                    {
+                                        bt.d = true;
+                                        dk.d = true;
+                                        bt.x = dk.x;
+                                        bt.y = dk.y;
+                                        bt.a = -dk.a;
+                                        bt.pt = [];
+                                        dk.bt = bt;
+                                        return true;
+                                    }
                                 }
-                                else
+                            });
+                        }
+                        lnd.forEach(pt => {
+                            let prev = pt[0];
+                            for (let i=1; i<pt.length; i++)
+                            {
+                                if (lnCol(prev, pt[i], bt))
                                 {
                                     bt.a = ref(prev, pt[i], bt.a);
                                     bt.pt = [];
@@ -365,13 +351,44 @@
                                 }
                                 prev = pt[i]
                             }
-                        }
+                        });
+                        [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
+                            let prev = pt[0];
+                            for (let i=1; i<pt.length; i++)
+                            {
+                                if (lnCol(prev, pt[i], bt))
+                                {
+                                    if (bt.c < 1)
+                                    {
+                                        bts = bts.filter(b => b.i != bt.i);
+                                    }
+                                    else
+                                    {
+                                        bt.a = ref(prev, pt[i], bt.a);
+                                        bt.pt = [];
+                                        mvBt(bt);
+                                    }
+                                    prev = pt[i]
+                                }
+                            }
+                        });
+                        bts.some(bt2 => {
+                            if (col(bt, bt2) && bt.i != bt2.i)
+                            {
+                                st = 1;
+                                return true;
+                            }
+                        });
                     });
-                });
 
-                ctx.fillStyle = "white";
-                ctx.fillText("Cargo: " + scr, 20, 20);
-
+                    ctx.fillStyle = "white";
+                    ctx.fillText("Cargo: " + scr, 20, 20);
+                }
+                else
+                {
+                    ctx.fillText("Nicely Done!", 390, 190);
+                    ctx.fillText("Cargo: " + scr, 390, 210);
+                }
                 requestAnimationFrame(main);
             }
 
