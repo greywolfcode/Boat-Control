@@ -33,6 +33,7 @@
             const rotate = ctx.rotate.bind(ctx);
             const beginPath = ctx.beginPath.bind(ctx);
             const fillRect  = ctx.fillRect.bind(ctx);
+            const performanceNow = performance.now.bind(performance);
 
             const PI = Math.PI;
             const E = Math.E;
@@ -47,7 +48,7 @@
             let m = false;
             let mBt = null;
             let dt = 0;
-            let lt = performance.now();
+            let lt = performanceNow();
             let scr = 0;
             let spwnT = 1;
             let spwnI = 0;
@@ -200,8 +201,8 @@
                 if (st == 0)
                 {
 
-                    dt = performance.now() - lt;
-                    lt = performance.now();    
+                    dt =performanceNow() - lt;
+                    lt =performanceNow();    
                     
                     //spwn
                     if (spwnT > spwnI)
