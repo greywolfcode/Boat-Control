@@ -34,6 +34,9 @@
             const beginPath = ctx.beginPath.bind(ctx);
             const fillRect  = ctx.fillRect.bind(ctx);
 
+            const PI = Math.PI;
+            const E = Math.E;
+
             let bts = [];
             const dks = [];
             const lnd = [
@@ -55,7 +58,7 @@
                 let a = atan2(x1 - x2, y1 - y2)
                 if (a < 0)
                 {
-                    a += 2 * Math.PI;
+                    a += 2 * PI;
                 }
                 return a;
             }
@@ -165,7 +168,7 @@
                 let rX = 2 * d * v[0] - bv[0];
                 let rY = 2 * d * v[1] - bv[1];
 
-                return atan2(rY, rX) + Math.PI;
+                return atan2(rY, rX) + PI;
             }
 
             function mvBt(bt)
@@ -186,10 +189,10 @@
                 bt.y -= bt.spd*cos(bt.a)*dt;
             }
 
-            dks.push(crtDk(348, 121, 0, -Math.PI/6));
-            dks.push(crtDk(320, 137, 0, -Math.PI/6));
-            dks.push(crtDk(578, 381, 1, 5*Math.PI/6));
-            dks.push(crtDk(550, 397, 1, 5*Math.PI/6));
+            dks.push(crtDk(348, 121, 0, -PI/6));
+            dks.push(crtDk(320, 137, 0, -PI/6));
+            dks.push(crtDk(578, 381, 1, 5*PI/6));
+            dks.push(crtDk(550, 397, 1, 5*PI/6));
 
 
             function main()
@@ -206,7 +209,7 @@
                         let bt = crtBt();
                         bts.push(bt);
                         spwnT = 0;
-                        spwnI = ((1 - Math.E ** (-0.5 * rand())) / (1 - Math.E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
+                        spwnI = ((1 - E ** (-0.5 * rand())) / (1 - E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
                     }
                     else
                     {
@@ -270,7 +273,7 @@
                             if (dk.bt.c < 1)
                             {
                                 dk.d = false;
-                                dk.bt.a += Math.PI
+                                dk.bt.a += PI
                             }
                         }
                     });
@@ -280,10 +283,10 @@
                         ctx.fillStyle = "lightgrey";
                         ctx.save();
                         translate(bt.x, bt.y);
-                        rotate(Math.PI-bt.a);
+                        rotate(PI-bt.a);
                         beginPath();
                         fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
-                        ctx.arc(0, bt.h/2, bt.w/2, 0, Math.PI);
+                        ctx.arc(0, bt.h/2, bt.w/2, 0, PI);
                         ctx.fill();
 
                         if (bt.col < 0.5)
