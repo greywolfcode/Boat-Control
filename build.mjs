@@ -44,7 +44,7 @@ let html = "";
 for (const part of src.split(/(<script>[\s\S]*?<\/script>|<style>[\s\S]*?<\/style>)/)) {
   if (part.startsWith("<script>")) {
     const js = part.slice(8, -9).replace(/glsl`([^`]*)`/g, (_, s) => JSON.stringify(glsl(s)));
-    const { code } = await minify(js, { toplevel: true, compress: { passes: 3, booleans_as_integers: true}});
+    const { code } = await minify(js, { toplevel: true, compress: { passes: 3, booleans_as_integers: true}, "mangle": {"properties": true}});
     html += "<script>" + code + "</script>";
   } else if (part.startsWith("<style>")) {
     html += part
