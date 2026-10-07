@@ -23,6 +23,13 @@
             const cntY = h/2;
             const ctx = c.getContext("2d");
             ctx.font = "20px serif"; 
+            
+            const rand = Math.random;
+            const atan2 = Math.atan2;
+            const cos = Math.cos;
+            const sin = Math.sin;
+            const addEventListener = c.addEventListener;
+
             let bts = [];
             const dks = [];
             const lnd = [
@@ -41,7 +48,7 @@
 
             function getA(x1, y1, x2, y2)
             {
-                let a = Math.atan2(x1 - x2, y1 - y2)
+                let a = atan2(x1 - x2, y1 - y2)
                 if (a < 0)
                 {
                     a += 2 * Math.PI;
@@ -65,11 +72,11 @@
 
             function crtBt()
             {
-                let wl = Math.random();
-                let wr = Math.random();
-                let hr = Math.random();
-                let s =  Math.random()*10;
-                let col = Math.round(Math.random());
+                let wl = rand();
+                let wr = rand();
+                let hr = rand();
+                let s =  rand()*10;
+                let col = Math.round(rand());
                 let c;
                 let spd;
                 let ht;                
@@ -144,7 +151,7 @@
 
             function ref(pt1, pt2, a)
             {
-                let bv = [Math.cos(a), Math.sin(a)];
+                let bv = [cos(a), sin(a)];
 
                 let v = [pt2[0] - pt1[0], -(pt2[1] - pt1[1])];
                 let l = Math.hypot(v[0], v[1]);
@@ -154,7 +161,7 @@
                 let rX = 2 * d * v[0] - bv[0];
                 let rY = 2 * d * v[1] - bv[1];
 
-                return Math.atan2(rY, rX) + Math.PI;
+                return atan2(rY, rX) + Math.PI;
             }
 
             function mvBt(bt)
@@ -171,8 +178,8 @@
                 }
                 bt.pX = bt.x;
                 bt.pY = bt.y
-                bt.x -= bt.spd*Math.sin(bt.a)*dt;
-                bt.y -= bt.spd*Math.cos(bt.a)*dt;
+                bt.x -= bt.spd*sin(bt.a)*dt;
+                bt.y -= bt.spd*cos(bt.a)*dt;
             }
 
             dks.push(crtDk(348, 121, 0, -Math.PI/6));
@@ -195,7 +202,7 @@
                         let bt = crtBt();
                         bts.push(bt);
                         spwnT = 0;
-                        spwnI = ((1 - Math.E ** (-0.5 * Math.random())) / (1 - Math.E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
+                        spwnI = ((1 - Math.E ** (-0.5 * rand())) / (1 - Math.E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
                     }
                     else
                     {
@@ -384,7 +391,7 @@
                 };
             }
 
-            c.addEventListener("mousemove", (e) =>
+            addEventListener("mousemove", (e) =>
             {
                 let mP = getMP(e);
                 if (mBt != null)
@@ -392,7 +399,7 @@
                     mBt.pt.push([mP.x, mP.y]);
                 }
             });
-            c.addEventListener("mousedown", (e) =>
+            addEventListener("mousedown", (e) =>
             {
                 m=true;
                 let mP = getMP(e);
@@ -419,12 +426,12 @@
                     }
                 });
             });
-            c.addEventListener("mouseup", (e) =>
+            addEventListener("mouseup", (e) =>
             {
                m=false;
                mBt=null;
             });
-            c.addEventListener("mouseleave", (e) =>
+            addEventListener("mouseleave", (e) =>
             {
                m=false;
                mBt=null;
