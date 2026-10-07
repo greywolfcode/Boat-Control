@@ -270,7 +270,6 @@ docks.push(createDock(578, 381, 1, 5*Math.PI/6));
 docks.push(createDock(550, 397, 1, 5*Math.PI/6));
 
 
-boats.push(createBoat());
 function main()
 {
     if (state == 0)
