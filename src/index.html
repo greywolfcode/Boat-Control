@@ -29,6 +29,7 @@
                 [[0, 0], [0, 200], [311, 152], [300, 130], [292, 119], [350, 90], [367, 123], [400, 0]],
                 [[400, 480], [530, 397], [550, 432], [606, 399], [582, 368], [800, 300], [800, 480]]
             ];
+            let rmv = []
             let m = false;
             let mBt = null;
             let dt = 0;
@@ -360,7 +361,7 @@
                                 {
                                     if (bt.c < 1)
                                     {
-                                        bts = bts.filter(b => b.i != bt.i);
+                                        rmv.push(bt.i)
                                     }
                                     else
                                     {
@@ -379,6 +380,9 @@
                                 return true;
                             }
                         });
+
+                        bts = bts.filter(b => !(b.i in rmv));
+                        rmv = [];
                     });
 
                     ctx.fillStyle = "white";
