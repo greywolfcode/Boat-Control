@@ -24,7 +24,7 @@
             const cntX = w/2;
             const cntY = h/2;
             const ctx = c.getContext("2d");
-            const bts = [];
+            let bts = [];
             const dks = [];
             const lnd = [
                 [[0, 0], [0, 200], [311, 152], [300, 130], [292, 119], [350, 90], [367, 123], [400, 0]],
@@ -58,7 +58,8 @@
                     d: false,
                     w:30,
                     t:0,
-                    bt:null
+                    bt:null,
+                    i: crypto.randomUUID()
                 };
             }
 
@@ -99,7 +100,7 @@
                 }
                 else
                 {
-                    x=800;
+                    x=795;
                     y = hr * 180;
                 }
                 let a = getA(x, y, cntX, cntY);
@@ -112,6 +113,8 @@
                     spd,
                     x: x+5, 
                     y:y-(ht+c)/2,
+                    pX: x+5, 
+                    pY: y-(ht+c)/2,
                     h:ht+c,
                     w:10,
                     a,
@@ -148,6 +151,36 @@
                 return (dx **2 + dy **2) <= (d ** 2);
             }
 
+            function ccw(pt1, pt2, pt3)
+            {
+                return (pt3[1] - pt1[1]) * (pt2[0] - pt1[0]) > (pt2[1] - pt1[1]) * (pt3[0]- pt1[0]);
+            }
+
+            function lnCol(pt1, pt2, bt)
+            {
+                return ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
+            }
+
+            function dot (x1, y1, x2, y2)
+            {
+                return x1 * x2 + y1 * y2;
+            }
+
+            function ref(pt1, pt2, a)
+            {
+                let bv = [Math.cos(a), Math.sin(a)];
+
+                let v = [pt2[0] - pt1[0], pt2[1] - pt1[1]];
+                let l = Math.hypot(v[0], v[1]);
+                v = v.map(n => n / l);
+                let d = dot(bv[0], bv[1], v[0], v[1])
+
+                let rX = 2 * d * v[0] - bv[0];
+                let rY = 2 * d * v[1] - bv[1];
+
+                return Math.atan2(rY, rX) + Math.PI;
+            }
+
             function drwBt(bt)
             {
                 ctx.fillStyle = "lightgrey";
@@ -173,7 +206,6 @@
                      ctx.fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
                 }
                 ctx.restore()
-
                 ctx.strokeStyle = "lightgrey";
                 let prv = [bt.x, bt.y];
                 bt.pt.forEach(pt => {
@@ -196,6 +228,8 @@
                         bt.pt.shift();
                     }
                 }
+                bt.pX = bt.x;
+                bt.pY = bt.y
                 bt.x -= bt.spd*Math.sin(bt.a)*dt;
                 bt.y -= bt.spd*Math.cos(bt.a)*dt;
             }
@@ -244,6 +278,7 @@
             dks.push(crtDk(550, 397, 1, 5*Math.PI/6));
 
 
+            bts.push(crtBt());
             function main()
             {
                 dt = performance.now() - lt;
@@ -253,29 +288,7 @@
 
                 ctx.clearRect(0, 0, c.width, c.height);
 
-                bts.forEach(bt => {
-                    drwBt(bt);
-                    if (!bt.d)
-                    {
-                        mvBt(bt);
-                        dks.some(dk => {
-                            if (!dk.d && dk.col == bt.col && bt.c > 0)
-                            {
-                                if (col(dk, bt))
-                                {
-                                    bt.d = true;
-                                    dk.d = true;
-                                    bt.x = dk.x;
-                                    bt.y = dk.y;
-                                    bt.a = -dk.a;
-                                    bt.pt = [];
-                                    dk.bt = bt;
-                                    return true;
-                                }
-                            }
-                        });
-                    }
-                });
+                
                 lnd.forEach(pt => {
                     drwLnd(pt);
                 });
@@ -300,6 +313,60 @@
                             dk.bt.a += Math.PI
                         }
                     }
+                });
+                bts.forEach(bt => {
+                    drwBt(bt);
+                    if (!bt.d)
+                    {
+                        mvBt(bt);
+                        dks.some(dk => {
+                            if (!dk.d && dk.col == bt.col && bt.c > 0)
+                            {
+                                if (col(dk, bt))
+                                {
+                                    bt.d = true;
+                                    dk.d = true;
+                                    bt.x = dk.x;
+                                    bt.y = dk.y;
+                                    bt.a = -dk.a;
+                                    bt.pt = [];
+                                    dk.bt = bt;
+                                    return true;
+                                }
+                            }
+                        });
+                    }
+                    lnd.forEach(pt => {
+                        let prev = pt[0];
+                        for (let i=1; i<pt.length; i++)
+                        {
+                            if (lnCol(prev, pt[i], bt))
+                            {
+                                bt.a = ref(prev, pt[i], bt.a);
+                                bt.pt = [];
+                                mvBt(bt);
+                            }
+                        }
+                    });
+                    [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
+                        let prev = pt[0];
+                        for (let i=1; i<pt.length; i++)
+                        {
+                            if (lnCol(prev, pt[i], bt))
+                            {
+                                if (bt.c < 1)
+                                {
+                                    bts = bts.filter(b => b.i != bt.i);
+                                }
+                                else
+                                {
+                                    bt.a = ref(prev, pt[i], bt.a);
+                                    bt.pt = [];
+                                    mvBt(bt);
+                                }
+                            }
+                        }
+                    });
                 });
 
                 ctx.fillStyle = "white";
