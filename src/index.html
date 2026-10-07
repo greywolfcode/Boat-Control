@@ -16,35 +16,35 @@
             }
         </style>
         <script>
-            const c = document.getElementById("c");
-            const w = c.width = 800;
-            const h = c.height = 480;
-            const cntX = w/2;
-            const cntY = h/2;
-            const ctx = c.getContext("2d");
+            const c = document.getElementById("c"),
+            w = c.width = 800,
+            h = c.height = 480,
+            cntX = w/2,
+            cntY = h/2,
+            ctx = c.getContext("2d"),
+            rand = Math.random,
+            atan2 = Math.atan2,
+            cos = Math.cos,
+            sin = Math.sin,
+            addEventListener = c.addEventListener;
             ctx.font = "20px serif"; 
             
-            const rand = Math.random;
-            const atan2 = Math.atan2;
-            const cos = Math.cos;
-            const sin = Math.sin;
-            const addEventListener = c.addEventListener;
-            const translate = ctx.translate.bind(ctx);
-            const rotate = ctx.rotate.bind(ctx);
-            const beginPath = ctx.beginPath.bind(ctx);
-            const fillRect  = ctx.fillRect.bind(ctx);
-            const performanceNow = performance.now.bind(performance);
+            const translate = ctx.translate.bind(ctx),
+            rotate = ctx.rotate.bind(ctx),
+            beginPath = ctx.beginPath.bind(ctx),
+            fillRect  = ctx.fillRect.bind(ctx),
+            performanceNow = performance.now.bind(performance),
 
-            const PI = Math.PI;
-            const E = Math.E;
+            PI = Math.PI,
+            E = Math.E,
 
-            let bts = [];
-            const dks = [];
-            const lnd = [
+            dks = [],
+            lnd = [
                 [[0, 0], [0, 200], [311, 152], [300, 130], [292, 119], [350, 90], [367, 123], [400, 0]],
                 [[400, 480], [530, 397], [550, 432], [606, 399], [582, 368], [800, 300], [800, 480]]
             ];
-            let rmv = []
+            let bts = [];
+            let rmv = [];
             let m = false;
             let mBt = null;
             let dt = 0;
