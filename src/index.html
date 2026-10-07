@@ -29,6 +29,10 @@
             const cos = Math.cos;
             const sin = Math.sin;
             const addEventListener = c.addEventListener;
+            const translate = ctx.translate.bind(ctx);
+            const rotate = ctx.rotate.bind(ctx);
+            const beginPath = ctx.beginPath.bind(ctx);
+            const fillRect  = ctx.fillRect.bind(ctx);
 
             let bts = [];
             const dks = [];
@@ -214,7 +218,7 @@
                     //drwLnd
                     lnd.forEach(pt => {
                         ctx.fillStyle = "green";
-                        ctx.beginPath();
+                        beginPath();
                         ctx.moveTo(pt[0][0], pt[0][1]);
                         for (let i=1; i<pt.length; i++)
                         {
@@ -228,8 +232,8 @@
                         
                         //drwDk
                         ctx.save();
-                        ctx.translate(dk.x, dk.y);
-                        ctx.rotate(dk.a);
+                        translate(dk.x, dk.y);
+                        rotate(dk.a);
 
                         let l = -5;
                         let t = -20;
@@ -243,10 +247,10 @@
                             ctx.fillStyle = "orange";
                         }
 
-                        ctx.beginPath();
-                        ctx.fillRect(l-10, t-10, 30, 5);
-                        ctx.fillRect(l-10, t-10, 5, 40);
-                        ctx.fillRect(l+18, t-10, 5, 40);
+                        beginPath();
+                        fillRect(l-10, t-10, 30, 5);
+                        fillRect(l-10, t-10, 5, 40);
+                        fillRect(l+18, t-10, 5, 40);
 
                         ctx.restore()
 
@@ -275,10 +279,10 @@
                         //drwBt
                         ctx.fillStyle = "lightgrey";
                         ctx.save();
-                        ctx.translate(bt.x, bt.y);
-                        ctx.rotate(Math.PI-bt.a);
-                        ctx.beginPath();
-                        ctx.fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
+                        translate(bt.x, bt.y);
+                        rotate(Math.PI-bt.a);
+                        beginPath();
+                        fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
                         ctx.arc(0, bt.h/2, bt.w/2, 0, Math.PI);
                         ctx.fill();
 
@@ -293,13 +297,13 @@
                         
                         for(let i=0; i<bt.c; i++)
                         {
-                            ctx.fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
+                            fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
                         }
                         ctx.restore()
                         ctx.strokeStyle = "lightgrey";
                         let prv = [bt.x, bt.y];
                         bt.pt.forEach(pt => {
-                            ctx.beginPath();
+                            beginPath();
                             ctx.moveTo(prv[0], prv[1]);
                             ctx.lineTo(pt[0], pt[1]);
                             ctx.stroke();
