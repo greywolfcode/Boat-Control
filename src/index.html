@@ -122,25 +122,6 @@
                     i: crypto.randomUUID()
                 };
             }
-            function spwnCrv(x)
-            {
-                return ((1 - Math.E ** (-0.5 * x)) / (1 - Math.E ** (-0.5))) ** 0.15
-            }
-            function spwn()
-            {
-                if (spwnT > spwnI)
-                {
-                    let bt = crtBt();
-                    bts.push(bt);
-                    spwnT = 0;
-                    spwnI = spwnCrv(Math.random()) * 5000;
-                }
-                else
-                {
-                    spwnT += dt;
-                }
-
-            }
 
             function col(bt1, bt2)
             {
@@ -161,11 +142,6 @@
                 return ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
             }
 
-            function dot (x1, y1, x2, y2)
-            {
-                return x1 * x2 + y1 * y2;
-            }
-
             function ref(pt1, pt2, a)
             {
                 let bv = [Math.cos(a), Math.sin(a)];
@@ -173,7 +149,7 @@
                 let v = [pt2[0] - pt1[0], -(pt2[1] - pt1[1])];
                 let l = Math.hypot(v[0], v[1]);
                 v = v.map(n => n / l);
-                let d = dot(bv[0], bv[1], v[0], v[1])
+                let d = bv[0] * v[0] + bv[1] * v[1]; //dot
 
                 let rX = 2 * d * v[0] - bv[0];
                 let rY = 2 * d * v[1] - bv[1];
@@ -181,41 +157,6 @@
                 return Math.atan2(rY, rX) + Math.PI;
             }
 
-            function drwBt(bt)
-            {
-                ctx.fillStyle = "lightgrey";
-                ctx.save();
-                ctx.translate(bt.x, bt.y);
-                ctx.rotate(Math.PI-bt.a);
-                ctx.beginPath();
-                ctx.fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
-                ctx.arc(0, bt.h/2, bt.w/2, 0, Math.PI);
-                ctx.fill();
-
-                if (bt.col < 0.5)
-                {
-                    ctx.fillStyle = "purple";
-                }
-                else
-                {
-                    ctx.fillStyle = "orange";
-                }
-                
-                for(let i=0; i<bt.c; i++)
-                {
-                     ctx.fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
-                }
-                ctx.restore()
-                ctx.strokeStyle = "lightgrey";
-                let prv = [bt.x, bt.y];
-                bt.pt.forEach(pt => {
-                    ctx.beginPath();
-                    ctx.moveTo(prv[0], prv[1]);
-                    ctx.lineTo(pt[0], pt[1]);
-                    ctx.stroke();
-                    prv = pt;
-                });
-            }
             function mvBt(bt)
             {
                 if(bt.pt.length  > 0)
@@ -233,44 +174,6 @@
                 bt.x -= bt.spd*Math.sin(bt.a)*dt;
                 bt.y -= bt.spd*Math.cos(bt.a)*dt;
             }
-            function drwDk(dk)
-            {
-                ctx.save();
-                ctx.translate(dk.x, dk.y);
-                ctx.rotate(dk.a);
-
-                let l = -5;
-                let t = -20;
-
-                if (dk.col < 1)
-                {
-                    ctx.fillStyle = "purple";
-                }
-                else
-                {
-                    ctx.fillStyle = "orange";
-                }
-
-                ctx.beginPath();
-                ctx.fillRect(l-10, t-10, 30, 5);
-                ctx.fillRect(l-10, t-10, 5, 40);
-                ctx.fillRect(l+18, t-10, 5, 40);
-
-                ctx.restore()
-            }
-            function drwLnd(lnd)
-            {
-                ctx.fillStyle = "green";
-                ctx.beginPath();
-                ctx.moveTo(lnd[0][0], lnd[0][1]);
-                for (let i=1; i<lnd.length; i++)
-                {
-                    ctx.lineTo(lnd[i][0], lnd[i][1]);
-
-                }
-                ctx.closePath();
-                ctx.fill();
-            }
 
             dks.push(crtDk(348, 121, 0, -Math.PI/6));
             dks.push(crtDk(320, 137, 0, -Math.PI/6));
@@ -286,16 +189,60 @@
                     dt = performance.now() - lt;
                     lt = performance.now();    
                     
-                    spwn();
+                    //spwn
+                    if (spwnT > spwnI)
+                    {
+                        let bt = crtBt();
+                        bts.push(bt);
+                        spwnT = 0;
+                        spwnI = ((1 - Math.E ** (-0.5 * Math.random())) / (1 - Math.E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
+                    }
+                    else
+                    {
+                        spwnT += dt;
+                    }
 
                     ctx.clearRect(0, 0, c.width, c.height);
 
-                    
+                    //drwLnd
                     lnd.forEach(pt => {
-                        drwLnd(pt);
+                        ctx.fillStyle = "green";
+                        ctx.beginPath();
+                        ctx.moveTo(pt[0][0], pt[0][1]);
+                        for (let i=1; i<pt.length; i++)
+                        {
+                            ctx.lineTo(pt[i][0], pt[i][1]);
+                        }
+                        ctx.closePath();
+                        ctx.fill();
                     });
+
                     dks.forEach(dk => {
-                        drwDk(dk);
+                        
+                        //drwDk
+                        ctx.save();
+                        ctx.translate(dk.x, dk.y);
+                        ctx.rotate(dk.a);
+
+                        let l = -5;
+                        let t = -20;
+
+                        if (dk.col < 1)
+                        {
+                            ctx.fillStyle = "purple";
+                        }
+                        else
+                        {
+                            ctx.fillStyle = "orange";
+                        }
+
+                        ctx.beginPath();
+                        ctx.fillRect(l-10, t-10, 30, 5);
+                        ctx.fillRect(l-10, t-10, 5, 40);
+                        ctx.fillRect(l+18, t-10, 5, 40);
+
+                        ctx.restore()
+
                         if (dk.d)
                         {
                             if (dk.t > 2500)
@@ -317,7 +264,41 @@
                         }
                     });
                     bts.forEach(bt => {
-                        drwBt(bt);
+                        
+                        //drwBt
+                        ctx.fillStyle = "lightgrey";
+                        ctx.save();
+                        ctx.translate(bt.x, bt.y);
+                        ctx.rotate(Math.PI-bt.a);
+                        ctx.beginPath();
+                        ctx.fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
+                        ctx.arc(0, bt.h/2, bt.w/2, 0, Math.PI);
+                        ctx.fill();
+
+                        if (bt.col < 0.5)
+                        {
+                            ctx.fillStyle = "purple";
+                        }
+                        else
+                        {
+                            ctx.fillStyle = "orange";
+                        }
+                        
+                        for(let i=0; i<bt.c; i++)
+                        {
+                            ctx.fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
+                        }
+                        ctx.restore()
+                        ctx.strokeStyle = "lightgrey";
+                        let prv = [bt.x, bt.y];
+                        bt.pt.forEach(pt => {
+                            ctx.beginPath();
+                            ctx.moveTo(prv[0], prv[1]);
+                            ctx.lineTo(pt[0], pt[1]);
+                            ctx.stroke();
+                            prv = pt;
+                        });
+
                         if (!bt.d)
                         {
                             mvBt(bt);
