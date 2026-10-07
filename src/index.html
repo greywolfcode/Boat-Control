@@ -54,7 +54,7 @@
             let spwnI = 0;
             let st = 0
 
-            function getA(x1, y1, x2, y2)
+            const getA = (x1, y1, x2, y2) =>
             {
                 let a = atan2(x1 - x2, y1 - y2)
                 if (a < 0)
@@ -64,7 +64,7 @@
                 return a;
             }
             
-            function crtDk(x, y, col, a)
+            const crtDk = (x, y, col, a) =>
             {
                 return {
                     x,
@@ -78,7 +78,7 @@
                 };
             }
 
-            function crtBt()
+            const crtBt = () =>
             {
                 let wl = rand();
                 let wr = rand();
@@ -138,7 +138,7 @@
                 };
             }
 
-            function col(bt1, bt2)
+            const col = (bt1, bt2) =>
             {
                 let dx = bt1.x - bt2.x;
                 let dy = bt1.y - bt2.y;
@@ -147,17 +147,17 @@
                 return (dx **2 + dy **2) <= (d ** 2);
             }
 
-            function ccw(pt1, pt2, pt3)
+            const ccw = (pt1, pt2, pt3) =>
             {
                 return (pt3[1] - pt1[1]) * (pt2[0] - pt1[0]) > (pt2[1] - pt1[1]) * (pt3[0]- pt1[0]);
             }
 
-            function lnCol(pt1, pt2, bt)
+            const lnCol = (pt1, pt2, bt) =>
             {
                 return ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
             }
 
-            function ref(pt1, pt2, a)
+            const ref = (pt1, pt2, a) =>
             {
                 let bv = [cos(a), sin(a)];
 
@@ -172,7 +172,7 @@
                 return atan2(rY, rX) + PI;
             }
 
-            function mvBt(bt)
+            const mvBt = (bt) =>
             {
                 if(bt.pt.length  > 0)
                 {
@@ -196,7 +196,7 @@
             dks.push(crtDk(550, 397, 1, 5*PI/6));
 
 
-            function main()
+            const main = () =>
             {
                 if (st == 0)
                 {
@@ -390,7 +390,7 @@
                 requestAnimationFrame(main);
             }
 
-            function getMP(e)
+            const getMP = (e) =>
             {
                 const rect = c.getBoundingClientRect();
                 return {
