@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/greywolfcode/Boat-Control#readme",
   "devDependencies": {
-    "clean-css": "^5.3.3",
     "terser": "^5.51.2"
   }
 }
