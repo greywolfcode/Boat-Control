@@ -27,7 +27,6 @@
 // Turns src/index.html into one data URI. Run: node build.mjs
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { minify } from "terser";
-import CleanCSS from 'clean-css';
 
 const LIMIT = 3072;
 const src = readFileSync("src/index.html", "utf8");
@@ -48,7 +47,11 @@ for (const part of src.split(/(<script>[\s\S]*?<\/script>|<style>[\s\S]*?<\/styl
     const { code } = await minify(js, { toplevel: true, compress: { passes: 3, booleans_as_integers: true}, "mangle": {"properties": true}});
     html += "<script>" + code + "</script>";
   } else if (part.startsWith("<style>")) {
-      html += "<style>" + new CleanCSS({level: 1}).minify(part).styles + "</style>";
+    html += part
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/\s+/g, " ")
+      .replace(/\s*([{};:,>])\s*/g, "$1")
+      .replace(/;}/g, "}");
   } else {
     html += await part.replace(/<!--[\s\S]*?-->/g, "").replace(/\s+/g, " ").replace(/>\s+</g, "><").trim();
   }
