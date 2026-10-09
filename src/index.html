@@ -206,7 +206,7 @@
                 ctx.fillStyle = "green";
                 beginPath();
                 ctx.moveTo(pt[0][0], pt[0][1]);
-                for (let i=1; i<pt.length; i++)
+                for (let i=pt.length; i--;)
                 {
                     ctx.lineTo(pt[i][0], pt[i][1]);
                 }
@@ -304,7 +304,7 @@
                 }
                 lnd.forEach(pt => {
                     let prev = pt[0];
-                    for (let i=1; i<pt.length; i++)
+                    for (let i=pt.length; i--;)
                     {
                         if (lnCol(prev, pt[i], bt))
                         {
@@ -317,7 +317,7 @@
                 });
                 [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
                     let prev = pt[0];
-                    for (let i=1; i<pt.length; i++)
+                    for (let i=pt.length; i--;)
                     {
                         if (lnCol(prev, pt[i], bt))
                         {
