@@ -27,13 +27,9 @@
 // Turns src/index.html into one data URI. Run: node build.mjs
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { minify } from "terser";
-import zlib from 'node:zlib';
 
 const LIMIT = 3072;
 const src = readFileSync("src/index.html", "utf8");
-const decompressCode = `
-
-`
 
 // Squeeze whitespace in shaders written as glsl`...` (terser leaves strings alone).
 function glsl(code) {
@@ -48,7 +44,7 @@ let html = "";
 for (const part of src.split(/(<script>[\s\S]*?<\/script>|<style>[\s\S]*?<\/style>)/)) {
   if (part.startsWith("<script>")) {
     const js = part.slice(8, -9).replace(/glsl`([^`]*)`/g, (_, s) => JSON.stringify(glsl(s)));
-    let { code } = await minify(js, { toplevel: true, compress: { passes: 3, booleans_as_integers: true, unsafe: true,}, "mangle": {"properties": true}});
+    let { code } = await minify(js, { toplevel: true, compress: { passes: 3, booleans_as_integers: true, unsafe: true,}, mangle: {properties: true}});
     html += "<script>" + code + "</script>";
   } else if (part.startsWith("<style>")) {
     html += part
@@ -62,7 +58,7 @@ for (const part of src.split(/(<script>[\s\S]*?<\/script>|<style>[\s\S]*?<\/styl
 }
 
 // Only these three break a data URI. Encoding anything else costs bytes for nothing.
-const uri = "data:text/html," + html.replace(/%/g, "%25").replace(/#/g, "%23").replace(/\n/g, "%0A");
+const uri = "data:text/html," + html.replace(/\n/g, "%0A").replace(/#/g, "%23").replace(/%/g, "%25");
 
 mkdirSync("dist", { recursive: true });
 writeFileSync("dist/index.html", html);
