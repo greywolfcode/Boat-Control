@@ -1,420 +1,411 @@
-<!DOCTYPE html>
+<canvas id="c"></canvas>
+<style>
+    body { 
+        display: grid; place-items: center;
+        background: #000; 
+    }
+    canvas {
+        background: blue; 
+    }
+</style>
+<script>
+    const c = document.getElementById("c"),
+    w = c.width = 800,
+    h = c.height = 480,
+    cntX = w/2,
+    cntY = h/2,
+    ctx = c.getContext("2d"),
+    rand = Math.random,
+    atan2 = Math.atan2,
+    cos = Math.cos,
+    sin = Math.sin,
+    addEventListener = c.addEventListener;
+    ctx.font = "20px serif"; 
+    
+    const translate = ctx.translate.bind(ctx),
+    rotate = ctx.rotate.bind(ctx),
+    beginPath = ctx.beginPath.bind(ctx),
+    fillRect  = ctx.fillRect.bind(ctx),
+    performanceNow = performance.now.bind(performance),
 
-<html>
-    <head>
-        <title>Boat Control</title>
-    </head>
-    <body>
-        <canvas id="c"></canvas>
-        <style>
-            body { 
-                display: grid; place-items: center;
-                background: #000; 
+    PI = Math.PI,
+    E = Math.E,
+
+    dks = [],
+    lnd = [
+        [[0, 0], [0, 200], [311, 152], [300, 130], [292, 119], [350, 90], [367, 123], [400, 0]],
+        [[400, 480], [530, 397], [550, 432], [606, 399], [582, 368], [800, 300], [800, 480]]
+    ];
+    let bts = [];
+    let rmv = [];
+    let mBt = null;
+    let dt = 0;
+    let lt = performanceNow();
+    let scr = 0;
+    let spwnT = 1;
+    let spwnI = 0;
+    let st = 0
+    let counter = 0;
+
+    const getA = (x1, y1, x2, y2) =>
+    {
+        let a = atan2(x1 - x2, y1 - y2)
+
+        a += a < 0 ? 2 * PI : 0
+
+        return a;
+    }
+    
+    const crtDk = (x, y, col, a) =>
+    {
+        return {
+            x,
+            y,
+            col,
+            a,
+            d: false,
+            w:30,
+            t:0,
+            bt:null
+        };
+    }
+
+    const crtBt = () =>
+    {
+        let wl = rand();
+        let wr = rand();
+        let hr = rand();
+        let s =  rand()*10;
+        let col = Math.round(rand());
+        let c;
+        let spd;
+        let ht;                
+        if (s < 0.33)
+        {
+            spd=0.06;
+            c=1;
+            ht=5;
+        }
+        else if (s < 0.66)
+        {
+            spd=0.05;
+            c=2;
+            ht=10;
+        }
+        else
+        {
+            spd=0.04;
+            c=3;
+            ht=15;
+        }
+        let x=0;
+        let y=0;
+        if (wl < 0.5)
+        {
+            x=0;
+            y = 200 + hr * 280;
+        }
+        else
+        {
+            x=795;
+            y = hr * 180;
+        }
+        let a = getA(x, y, cntX, cntY);
+        
+        return {
+            s,
+            col,
+            c,
+            pt: [],
+            spd,
+            x: x+5, 
+            y:y-(ht+c)/2,
+            pX: x+5, 
+            pY: y-(ht+c)/2,
+            h:ht+c,
+            w:10,
+            a,
+            d: false,
+            i: counter++
+        };
+    }
+
+    const col = (bt1, bt2) =>
+    {
+        let dx = bt1.x - bt2.x;
+        let dy = bt1.y - bt2.y;
+        let d = (bt1.w) + (bt2.w);
+
+        return (dx **2 + dy **2) <= (d ** 2);
+    }
+
+    const ccw = (pt1, pt2, pt3) => (pt3[1] - pt1[1]) * (pt2[0] - pt1[0]) > (pt2[1] - pt1[1]) * (pt3[0]- pt1[0]);
+
+    const lnCol = (pt1, pt2, bt) => ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
+
+    const ref = (pt1, pt2, a) =>
+    {
+        let bv = [cos(a), sin(a)];
+
+        let v = [pt2[0] - pt1[0], -(pt2[1] - pt1[1])];
+        let l = Math.hypot(v[0], v[1]);
+        v = v.map(n => n / l);
+        let d = bv[0] * v[0] + bv[1] * v[1]; //dot
+
+        let rX = 2 * d * v[0] - bv[0];
+        let rY = 2 * d * v[1] - bv[1];
+
+        return atan2(rY, rX) + PI;
+    }
+
+    const mvBt = (bt) =>
+    {
+        if(bt.pt.length  > 0)
+        {
+            let p = bt.pt[0];
+            bt.a = getA(bt.x, bt.y, p[0], p[1]);
+            let d = Math.sqrt((bt.x - p[0]) ** 2 + (bt.y - p[1]) ** 2);
+            if ( d <= 1)
+            {
+                bt.pt.shift();
             }
-            canvas {
-                background: blue; 
-            }
-        </style>
-        <script>
-            const c = document.getElementById("c"),
-            w = c.width = 800,
-            h = c.height = 480,
-            cntX = w/2,
-            cntY = h/2,
-            ctx = c.getContext("2d"),
-            rand = Math.random,
-            atan2 = Math.atan2,
-            cos = Math.cos,
-            sin = Math.sin,
-            addEventListener = c.addEventListener;
-            ctx.font = "20px serif"; 
+        }
+        bt.pX = bt.x;
+        bt.pY = bt.y
+        bt.x -= bt.spd*sin(bt.a)*dt;
+        bt.y -= bt.spd*cos(bt.a)*dt;
+    }
+
+    dks.push(crtDk(348, 121, 0, -PI/6));
+    dks.push(crtDk(320, 137, 0, -PI/6));
+    dks.push(crtDk(578, 381, 1, 5*PI/6));
+    dks.push(crtDk(550, 397, 1, 5*PI/6));
+
+
+    const main = () =>
+    {
+        if (st == 0)
+        {
+
+            dt =performanceNow() - lt;
+            lt =performanceNow();    
             
-            const translate = ctx.translate.bind(ctx),
-            rotate = ctx.rotate.bind(ctx),
-            beginPath = ctx.beginPath.bind(ctx),
-            fillRect  = ctx.fillRect.bind(ctx),
-            performanceNow = performance.now.bind(performance),
-
-            PI = Math.PI,
-            E = Math.E,
-
-            dks = [],
-            lnd = [
-                [[0, 0], [0, 200], [311, 152], [300, 130], [292, 119], [350, 90], [367, 123], [400, 0]],
-                [[400, 480], [530, 397], [550, 432], [606, 399], [582, 368], [800, 300], [800, 480]]
-            ];
-            let bts = [];
-            let rmv = [];
-            let mBt = null;
-            let dt = 0;
-            let lt = performanceNow();
-            let scr = 0;
-            let spwnT = 1;
-            let spwnI = 0;
-            let st = 0
-            let counter = 0;
-
-            const getA = (x1, y1, x2, y2) =>
+            //spwn
+            if (spwnT > spwnI)
             {
-                let a = atan2(x1 - x2, y1 - y2)
-
-                a += a < 0 ? 2 * PI : 0
-
-                return a;
+                let bt = crtBt();
+                bts.push(bt);
+                spwnT = 0;
+                spwnI = ((1 - E ** (-0.5 * rand())) / (1 - E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
             }
-            
-            const crtDk = (x, y, col, a) =>
+            else
             {
-                return {
-                    x,
-                    y,
-                    col,
-                    a,
-                    d: false,
-                    w:30,
-                    t:0,
-                    bt:null
-                };
+                spwnT += dt;
             }
 
-            const crtBt = () =>
-            {
-                let wl = rand();
-                let wr = rand();
-                let hr = rand();
-                let s =  rand()*10;
-                let col = Math.round(rand());
-                let c;
-                let spd;
-                let ht;                
-                if (s < 0.33)
+            ctx.clearRect(0, 0, c.width, c.height);
+
+            //drwLnd
+            lnd.forEach(pt => {
+                ctx.fillStyle = "green";
+                beginPath();
+                ctx.moveTo(pt[0][0], pt[0][1]);
+                for (let i=1; i<pt.length; i++)
                 {
-                    spd=0.06;
-                    c=1;
-                    ht=5;
+                    ctx.lineTo(pt[i][0], pt[i][1]);
                 }
-                else if (s < 0.66)
-                {
-                    spd=0.05;
-                    c=2;
-                    ht=10;
-                }
-                else
-                {
-                    spd=0.04;
-                    c=3;
-                    ht=15;
-                }
-                let x=0;
-                let y=0;
-                if (wl < 0.5)
-                {
-                    x=0;
-                    y = 200 + hr * 280;
-                }
-                else
-                {
-                    x=795;
-                    y = hr * 180;
-                }
-                let a = getA(x, y, cntX, cntY);
+                ctx.closePath();
+                ctx.fill();
+            });
+
+            dks.forEach(dk => {
                 
-                return {
-                    s,
-                    col,
-                    c,
-                    pt: [],
-                    spd,
-                    x: x+5, 
-                    y:y-(ht+c)/2,
-                    pX: x+5, 
-                    pY: y-(ht+c)/2,
-                    h:ht+c,
-                    w:10,
-                    a,
-                    d: false,
-                    i: counter++
-                };
-            }
+                //drwDk
+                ctx.save();
+                translate(dk.x, dk.y);
+                rotate(dk.a);
 
-            const col = (bt1, bt2) =>
-            {
-                let dx = bt1.x - bt2.x;
-                let dy = bt1.y - bt2.y;
-                let d = (bt1.w) + (bt2.w);
+                let l = -5;
+                let t = -20;
 
-                return (dx **2 + dy **2) <= (d ** 2);
-            }
+                ctx.fillStyle = dk.col < 1 ? "purple" : "orange"
 
-            const ccw = (pt1, pt2, pt3) => (pt3[1] - pt1[1]) * (pt2[0] - pt1[0]) > (pt2[1] - pt1[1]) * (pt3[0]- pt1[0]);
+                beginPath();
+                fillRect(l-10, t-10, 30, 5);
+                fillRect(l-10, t-10, 5, 40);
+                fillRect(l+18, t-10, 5, 40);
 
-            const lnCol = (pt1, pt2, bt) => ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
+                ctx.restore()
 
-            const ref = (pt1, pt2, a) =>
-            {
-                let bv = [cos(a), sin(a)];
-
-                let v = [pt2[0] - pt1[0], -(pt2[1] - pt1[1])];
-                let l = Math.hypot(v[0], v[1]);
-                v = v.map(n => n / l);
-                let d = bv[0] * v[0] + bv[1] * v[1]; //dot
-
-                let rX = 2 * d * v[0] - bv[0];
-                let rY = 2 * d * v[1] - bv[1];
-
-                return atan2(rY, rX) + PI;
-            }
-
-            const mvBt = (bt) =>
-            {
-                if(bt.pt.length  > 0)
+                if (dk.d)
                 {
-                    let p = bt.pt[0];
-                    bt.a = getA(bt.x, bt.y, p[0], p[1]);
-                    let d = Math.sqrt((bt.x - p[0]) ** 2 + (bt.y - p[1]) ** 2);
-                    if ( d <= 1)
+                    if (dk.t > 2500)
                     {
-                        bt.pt.shift();
-                    }
-                }
-                bt.pX = bt.x;
-                bt.pY = bt.y
-                bt.x -= bt.spd*sin(bt.a)*dt;
-                bt.y -= bt.spd*cos(bt.a)*dt;
-            }
-
-            dks.push(crtDk(348, 121, 0, -PI/6));
-            dks.push(crtDk(320, 137, 0, -PI/6));
-            dks.push(crtDk(578, 381, 1, 5*PI/6));
-            dks.push(crtDk(550, 397, 1, 5*PI/6));
-
-
-            const main = () =>
-            {
-                if (st == 0)
-                {
-
-                    dt =performanceNow() - lt;
-                    lt =performanceNow();    
-                    
-                    //spwn
-                    if (spwnT > spwnI)
-                    {
-                        let bt = crtBt();
-                        bts.push(bt);
-                        spwnT = 0;
-                        spwnI = ((1 - E ** (-0.5 * rand())) / (1 - E ** (-0.5))) ** 0.15 * 5000; //spwnCrv
+                        dk.t = 0
+                        dk.bt.c--;
+                        scr++;
                     }
                     else
                     {
-                        spwnT += dt;
+                        dk.t += dt;
                     }
 
-                    ctx.clearRect(0, 0, c.width, c.height);
+                    if (dk.bt.c < 1)
+                    {
+                        dk.d = false;
+                        dk.bt.a += PI
+                    }
+                }
+            });
+            bts.forEach(bt => {
+                
+                //drwBt
+                ctx.fillStyle = "lightgrey";
+                ctx.save();
+                translate(bt.x, bt.y);
+                rotate(PI-bt.a);
+                beginPath();
+                fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
+                ctx.arc(0, bt.h/2, bt.w/2, 0, PI);
+                ctx.fill();
 
-                    //drwLnd
-                    lnd.forEach(pt => {
-                        ctx.fillStyle = "green";
-                        beginPath();
-                        ctx.moveTo(pt[0][0], pt[0][1]);
-                        for (let i=1; i<pt.length; i++)
+                    ctx.fillStyle = bt.col < 0.5 ? "purple" : "orange"
+                
+                for(let i=0; i<bt.c; i++)
+                {
+                    fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
+                }
+                ctx.restore()
+                ctx.strokeStyle = "lightgrey";
+                let prv = [bt.x, bt.y];
+                bt.pt.forEach(pt => {
+                    beginPath();
+                    ctx.moveTo(prv[0], prv[1]);
+                    ctx.lineTo(pt[0], pt[1]);
+                    ctx.stroke();
+                    prv = pt;
+                });
+
+                if (!bt.d)
+                {
+                    mvBt(bt);
+                    dks.some(dk => {
+                        if (!dk.d && dk.col == bt.col && bt.c > 0)
                         {
-                            ctx.lineTo(pt[i][0], pt[i][1]);
-                        }
-                        ctx.closePath();
-                        ctx.fill();
-                    });
-
-                    dks.forEach(dk => {
-                        
-                        //drwDk
-                        ctx.save();
-                        translate(dk.x, dk.y);
-                        rotate(dk.a);
-
-                        let l = -5;
-                        let t = -20;
-
-                        ctx.fillStyle = dk.col < 1 ? "purple" : "orange"
-
-                        beginPath();
-                        fillRect(l-10, t-10, 30, 5);
-                        fillRect(l-10, t-10, 5, 40);
-                        fillRect(l+18, t-10, 5, 40);
-
-                        ctx.restore()
-
-                        if (dk.d)
-                        {
-                            if (dk.t > 2500)
+                            if (col(dk, bt))
                             {
-                                dk.t = 0
-                                dk.bt.c--;
-                                scr++;
+                                bt.d = true;
+                                dk.d = true;
+                                bt.x = dk.x;
+                                bt.y = dk.y;
+                                bt.a = -dk.a;
+                                bt.pt = [];
+                                dk.bt = bt;
+                                return true;
+                            }
+                        }
+                    });
+                }
+                lnd.forEach(pt => {
+                    let prev = pt[0];
+                    for (let i=1; i<pt.length; i++)
+                    {
+                        if (lnCol(prev, pt[i], bt))
+                        {
+                            bt.a = ref(prev, pt[i], bt.a);
+                            bt.pt = [];
+                            mvBt(bt);
+                        }
+                        prev = pt[i]
+                    }
+                });
+                [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
+                    let prev = pt[0];
+                    for (let i=1; i<pt.length; i++)
+                    {
+                        if (lnCol(prev, pt[i], bt))
+                        {
+                            if (bt.c < 1)
+                            {
+                                rmv.push(bt.i)
                             }
                             else
                             {
-                                dk.t += dt;
+                                bt.a = ref(prev, pt[i], bt.a);
+                                bt.pt = [];
+                                mvBt(bt);
                             }
-
-                            if (dk.bt.c < 1)
-                            {
-                                dk.d = false;
-                                dk.bt.a += PI
-                            }
-                        }
-                    });
-                    bts.forEach(bt => {
-                        
-                        //drwBt
-                        ctx.fillStyle = "lightgrey";
-                        ctx.save();
-                        translate(bt.x, bt.y);
-                        rotate(PI-bt.a);
-                        beginPath();
-                        fillRect(-bt.w/2, -bt.h/2, bt.w, bt.h, bt.a);
-                        ctx.arc(0, bt.h/2, bt.w/2, 0, PI);
-                        ctx.fill();
-
-                         ctx.fillStyle = bt.col < 0.5 ? "purple" : "orange"
-                        
-                        for(let i=0; i<bt.c; i++)
-                        {
-                            fillRect(-bt.w/2+1, -bt.h/2+ 5*i+i, bt.w-2, 5, bt.a);
-                        }
-                        ctx.restore()
-                        ctx.strokeStyle = "lightgrey";
-                        let prv = [bt.x, bt.y];
-                        bt.pt.forEach(pt => {
-                            beginPath();
-                            ctx.moveTo(prv[0], prv[1]);
-                            ctx.lineTo(pt[0], pt[1]);
-                            ctx.stroke();
-                            prv = pt;
-                        });
-
-                        if (!bt.d)
-                        {
-                            mvBt(bt);
-                            dks.some(dk => {
-                                if (!dk.d && dk.col == bt.col && bt.c > 0)
-                                {
-                                    if (col(dk, bt))
-                                    {
-                                        bt.d = true;
-                                        dk.d = true;
-                                        bt.x = dk.x;
-                                        bt.y = dk.y;
-                                        bt.a = -dk.a;
-                                        bt.pt = [];
-                                        dk.bt = bt;
-                                        return true;
-                                    }
-                                }
-                            });
-                        }
-                        lnd.forEach(pt => {
-                            let prev = pt[0];
-                            for (let i=1; i<pt.length; i++)
-                            {
-                                if (lnCol(prev, pt[i], bt))
-                                {
-                                    bt.a = ref(prev, pt[i], bt.a);
-                                    bt.pt = [];
-                                    mvBt(bt);
-                                }
-                                prev = pt[i]
-                            }
-                        });
-                        [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
-                            let prev = pt[0];
-                            for (let i=1; i<pt.length; i++)
-                            {
-                                if (lnCol(prev, pt[i], bt))
-                                {
-                                    if (bt.c < 1)
-                                    {
-                                        rmv.push(bt.i)
-                                    }
-                                    else
-                                    {
-                                        bt.a = ref(prev, pt[i], bt.a);
-                                        bt.pt = [];
-                                        mvBt(bt);
-                                    }
-                                    prev = pt[i]
-                                }
-                            }
-                        });
-                        bts.some(bt2 => {
-                            if (col(bt, bt2) && bt.i != bt2.i)
-                            {
-                                st = 1;
-                                return true;
-                            }
-                        });
-
-                        bts = bts.filter(b => !(b.i in rmv));
-                        rmv = [];
-                    });
-
-                    ctx.fillStyle = "white";
-                    ctx.fillText("Cargo: " + scr, 20, 20);
-                }
-                else
-                {
-                    ctx.fillText("Nicely Done!", 390, 190);
-                    ctx.fillText("Cargo: " + scr, 390, 210);
-                }
-                requestAnimationFrame(main);
-            }
-
-            const getMP = (e) =>
-            {
-                const rect = c.getBoundingClientRect();
-                return {
-                    x: e.clientX - rect.left,
-                    y: e.clientY - rect.top
-                };
-            }
-
-            addEventListener("mousemove", (e) =>
-            {
-                let mP = getMP(e);
-                if (mBt != null)
-                {
-                    mBt.pt.push([mP.x, mP.y]);
-                }
-            });
-            addEventListener("mousedown", (e) =>
-            {
-                let mP = getMP(e);
-
-                let x = mP.x; 
-                let y = mP.y;
-                let mr = {
-                    x: x, 
-                    y: y,
-                    h:0,
-                    w:0,
-                }
-                
-                bts.forEach(bt => {
-                    if ((!bt.d || bt.c < 1) && col(bt, mr))
-                    {
-                        mBt = bt;
-                        bt.pt = [];
-
-                        if (bt.c < 1)
-                        {
-                            bt.d = false;
+                            prev = pt[i]
                         }
                     }
                 });
-            });
-            addEventListener("mouseup", (e) => mBt=null);
+                bts.some(bt2 => {
+                    if (col(bt, bt2) && bt.i != bt2.i)
+                    {
+                        st = 1;
+                        return true;
+                    }
+                });
 
-            main();
-        </script>
-    </body>
-</html>
+                bts = bts.filter(b => !(b.i in rmv));
+                rmv = [];
+            });
+
+            ctx.fillStyle = "white";
+            ctx.fillText("Cargo: " + scr, 20, 20);
+        }
+        else
+        {
+            ctx.fillText("Nicely Done!", 390, 190);
+            ctx.fillText("Cargo: " + scr, 390, 210);
+        }
+        requestAnimationFrame(main);
+    }
+
+    const getMP = (e) =>
+    {
+        const rect = c.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    addEventListener("mousemove", (e) =>
+    {
+        let mP = getMP(e);
+        if (mBt != null)
+        {
+            mBt.pt.push([mP.x, mP.y]);
+        }
+    });
+    addEventListener("mousedown", (e) =>
+    {
+        let mP = getMP(e);
+
+        let x = mP.x; 
+        let y = mP.y;
+        let mr = {
+            x: x, 
+            y: y,
+            h:0,
+            w:0,
+        }
+        
+        bts.forEach(bt => {
+            if ((!bt.d || bt.c < 1) && col(bt, mr))
+            {
+                mBt = bt;
+                bt.pt = [];
+
+                if (bt.c < 1)
+                {
+                    bt.d = false;
+                }
+            }
+        });
+    });
+    addEventListener("mouseup", (e) => mBt=null);
+
+    main();
+</script>
