@@ -45,7 +45,6 @@
             ];
             let bts = [];
             let rmv = [];
-            let m = false;
             let mBt = null;
             let dt = 0;
             let lt = performanceNow();
@@ -394,7 +393,6 @@
             });
             addEventListener("mousedown", (e) =>
             {
-                m=true;
                 let mP = getMP(e);
 
                 let x = mP.x; 
@@ -421,12 +419,10 @@
             });
             addEventListener("mouseup", (e) =>
             {
-               m=false;
                mBt=null;
             });
             addEventListener("mouseleave", (e) =>
             {
-               m=false;
                mBt=null;
             });
 
