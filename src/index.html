@@ -52,6 +52,7 @@
             let spwnT = 1;
             let spwnI = 0;
             let st = 0
+            let counter = 0;
 
             const getA = (x1, y1, x2, y2) =>
             {
@@ -132,7 +133,7 @@
                     w:10,
                     a,
                     d: false,
-                    i: crypto.randomUUID()
+                    i: counter++
                 };
             }
 
