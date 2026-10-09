@@ -145,15 +145,9 @@
                 return (dx **2 + dy **2) <= (d ** 2);
             }
 
-            const ccw = (pt1, pt2, pt3) =>
-            {
-                return (pt3[1] - pt1[1]) * (pt2[0] - pt1[0]) > (pt2[1] - pt1[1]) * (pt3[0]- pt1[0]);
-            }
+            const ccw = (pt1, pt2, pt3) => (pt3[1] - pt1[1]) * (pt2[0] - pt1[0]) > (pt2[1] - pt1[1]) * (pt3[0]- pt1[0]);
 
-            const lnCol = (pt1, pt2, bt) =>
-            {
-                return ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
-            }
+            const lnCol = (pt1, pt2, bt) => ccw(pt1, [bt.x, bt.y], [bt.pX, bt.pY]) != ccw(pt2,  [bt.x, bt.y], [bt.pX, bt.pY]) && ccw(pt1, pt2,  [bt.x, bt.y]) != ccw(pt1, pt2, [bt.pX, bt.pY]);
 
             const ref = (pt1, pt2, a) =>
             {
@@ -417,10 +411,7 @@
                     }
                 });
             });
-            addEventListener("mouseup", (e) =>
-            {
-               mBt=null;
-            });
+            addEventListener("mouseup", (e) => mBt=null);
 
             main();
         </script>
