@@ -317,7 +317,7 @@
                 });
                 [[[0, 0], [0, 480]], [[0, 480], [800, 480]], [[800, 480], [800, 0]], [[800, 0], [0, 0]]].forEach(pt => {
                     let prev = pt[0];
-                    for (let i=pt.length; i--;)
+                    for (let i=1; i<pt.length; i++)
                     {
                         if (lnCol(prev, pt[i], bt))
                         {
