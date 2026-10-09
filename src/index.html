@@ -57,10 +57,9 @@
             const getA = (x1, y1, x2, y2) =>
             {
                 let a = atan2(x1 - x2, y1 - y2)
-                if (a < 0)
-                {
-                    a += 2 * PI;
-                }
+
+                a += a < 0 ? 2 * PI : 0
+
                 return a;
             }
             
@@ -242,14 +241,7 @@
                         let l = -5;
                         let t = -20;
 
-                        if (dk.col < 1)
-                        {
-                            ctx.fillStyle = "purple";
-                        }
-                        else
-                        {
-                            ctx.fillStyle = "orange";
-                        }
+                        ctx.fillStyle = dk.col < 1 ? "purple" : "orange"
 
                         beginPath();
                         fillRect(l-10, t-10, 30, 5);
@@ -290,14 +282,7 @@
                         ctx.arc(0, bt.h/2, bt.w/2, 0, PI);
                         ctx.fill();
 
-                        if (bt.col < 0.5)
-                        {
-                            ctx.fillStyle = "purple";
-                        }
-                        else
-                        {
-                            ctx.fillStyle = "orange";
-                        }
+                         ctx.fillStyle = bt.col < 0.5 ? "purple" : "orange"
                         
                         for(let i=0; i<bt.c; i++)
                         {
