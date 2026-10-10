@@ -53,7 +53,6 @@ for (const part of src.split(/(<script>[\s\S]*?<\/script>|<style>[\s\S]*?<\/styl
   if (part.startsWith("<script>")) {
     const js = part.slice(8, -9).replace(/glsl`([^`]*)`/g, (_, s) => JSON.stringify(glsl(s)));
     let { code } = await minify(js, { toplevel: true, compress: { passes: 3, booleans_as_integers: true, unsafe: true,}, mangle: {properties: true}});
-    writeFileSync("node.txt", compress(code), 'utf8');
 
     code = 'let _=`' + compress(code) + '`;\n' + decompress;
 
