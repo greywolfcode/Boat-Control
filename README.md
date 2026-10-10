@@ -6,6 +6,8 @@ Boat Control is a line-drawing game that can fit in an under 3kb file when built
 
 ## How to Play
 
+You can find the built game in the dist folder. Copy the text in uri.txt and paste it into your browser's search bar. You can also find the files in the releases tab.
+
 - Drag boats to docks
 - Drag them back off-screen when they unload
 - Don't Crash!
