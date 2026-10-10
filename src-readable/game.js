@@ -19,7 +19,8 @@ let lastTime = performance.now();
 let score = 0;
 let spawnTime = 1;
 let spawnInterval = 0;
-let state = 0
+let state = 0;
+let counter = 0;
 
 function getAngle(x1, y1, x2, y2)
 {
@@ -100,7 +101,7 @@ function createBoat()
         width:10,
         angle,
         docked: false,
-        index: crypto.randomUUID()
+        index: counter++
     };
 }
 /**
